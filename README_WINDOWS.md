@@ -5,7 +5,9 @@
 Бележки:
 - Проектът очаква работещ MongoDB сървър на `127.0.0.1:27017`.
 - Файловете, които ще използвате: `seed.js`, `app.js`, `package.json` (в корена на проекта).
+ - Файловете, които ще използвате: `seed.js`, `app.js`, `package.json` (в корена на проекта).
 
+Бележка: Тези инструкции предполагат, че изпълнявате командите от кореновата папка на проекта (текущата директория). Примерните пътища използват `data\\db` относително към текущата директория; при нужда можете да ги замените с пълен абсолютен път.
 ---
 
 ## 1) Бърза проверка (имате ли `mongod` и Node)
@@ -58,7 +60,9 @@ docker run -d -p 27017:27017 --name mongodb -v C:\data\db:/data/db mongo:6
 ## 3) Създаване на db папка (ако ще стартирате `mongod` ръчно)
 
 ```powershell
-New-Item -ItemType Directory -Path C:\data\db -Force
+New-Item -ItemType Directory -Path .\data\db -Force    # repo-relative
+# Алтернативно (за глобална системна папка):
+# New-Item -ItemType Directory -Path C:\data\db -Force
 ```
 
 (В този проект има `data\db` в репото; ако искате да го използвате вместо `C:\data\db`, използвайте пълния път към него в командите по-долу.)
@@ -70,8 +74,8 @@ New-Item -ItemType Directory -Path C:\data\db -Force
 А) Стартиране ръчно (в терминал — оставете прозореца отворен):
 
 ```powershell
-# Пример: използвайте repo папката като dbpath
-mongod --dbpath "C:\Users\atisw\github\WEBTex\data\db" --bind_ip 127.0.0.1
+# Пример: използвайте repo папката като dbpath (относителен път)
+mongod --dbpath "data\\db" --bind_ip 127.0.0.1
 ```
 
 Натиснете `Ctrl+C`, за да спрете този процес.
@@ -80,7 +84,8 @@ mongod --dbpath "C:\Users\atisw\github\WEBTex\data\db" --bind_ip 127.0.0.1
 
 ```powershell
 # Стартирайте PowerShell като Administrator
-mongod --dbpath "C:\Users\atisw\github\WEBTex\data\db" --logpath "C:\Users\atisw\github\WEBTex\data\mongod.log" --install
+# Инсталиране като услуга с repo-relative пътища (пълен път също работи)
+mongod --dbpath "${PWD}\\data\\db" --logpath "${PWD}\\data\\mongod.log" --install
 Start-Service MongoDB
 
 # Проверка на статуса
@@ -104,7 +109,7 @@ docker stop mongodb    # спира контейнера
 
 ## 5) Инсталиране на Node зависимости и стартиране на приложението
 
-Отворете PowerShell в корена на проекта (`C:\Users\atisw\github\WEBTex`) и изпълнете:
+Отворете PowerShell в корена на проекта (текущата директория) и изпълнете:
 
 ```powershell
 # Инсталирайте зависимостите
