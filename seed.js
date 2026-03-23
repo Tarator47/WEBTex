@@ -10,9 +10,9 @@ async function seedData() {
         const db = client.db(dbName);
         const collection = db.collection('users');
 
-        // Generate 100,000 documents
+        // Generate 1,000,000 documents
         const mockData = [];
-        for (let i = 0; i < 100000; i++) {
+        for (let i = 0; i < 1000000; i++) {
             mockData.push({
                 name: `User ${i}`,
                 age: Math.floor(Math.random() * 100),

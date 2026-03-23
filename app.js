@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const path = require('path');
 const { performance } = require('perf_hooks');
 const fs = require('fs');
@@ -51,12 +51,11 @@ app.get('/with-cursor', async (req, res) => {
         const db = client.db(dbName);
         const collection = db.collection('users');
 
+        // Cursor-based pagination using ObjectId range avoids skip cost.
+        const after = req.query.after;
+        const query = after ? { _id: { $gt: new ObjectId(after) } } : {};
         const startTime = performance.now();
-        const cursor = collection.find({}).skip(skip).limit(limit);
-        const data = [];
-        while (await cursor.hasNext()) {
-            data.push(await cursor.next());
-        }
+        const data = await collection.find(query).sort({ _id: 1 }).limit(limit).toArray();
         const endTime = performance.now();
 
         const timeTaken = (endTime - startTime).toFixed(2);

@@ -1,5 +1,8 @@
 let currentPage = 1;
-const limit = 10;
+const limit = 1000;
+
+let withCursorAfterHistory = [null];
+let withCursorIndex = 0;
 
 // Lists to store data for both methods
 const noCursorData = [];
@@ -19,7 +22,15 @@ async function fetchDataForBothSections(page) {
     const methods = ['no-cursor', 'with-cursor'];
 
     for (const method of methods) {
-        const response = await fetch(`/${method}?page=${page}&limit=${limit}`);
+        let url;
+        if (method === 'with-cursor') {
+            const after = withCursorAfterHistory[withCursorIndex];
+            url = `/with-cursor?limit=${limit}` + (after ? `&after=${after}` : '');
+        } else {
+            url = `/${method}?page=${page}&limit=${limit}`;
+        }
+
+        const response = await fetch(url);
         if (!response.ok) {
             console.error(`Error fetching data for ${method}: ${response.statusText}`);
             continue;
@@ -35,6 +46,20 @@ async function fetchDataForBothSections(page) {
             noCursorData.push({ page, time: data.timeTaken });
         } else {
             withCursorData.push({ page, time: data.timeTaken });
+            // update cursor history: store last _id for next page
+            if (Array.isArray(data.data) && data.data.length > 0) {
+                const lastId = data.data[data.data.length - 1]._id;
+                // if we're at the end of history (normal next), push
+                if (withCursorIndex === withCursorAfterHistory.length - 1) {
+                    withCursorAfterHistory.push(lastId);
+                    withCursorIndex++;
+                } else {
+                    // if we've navigated back and then fetched a new forward page, overwrite history
+                    withCursorIndex++;
+                    withCursorAfterHistory[withCursorIndex] = lastId;
+                    withCursorAfterHistory.length = withCursorIndex + 1;
+                }
+            }
         }
     }
 
