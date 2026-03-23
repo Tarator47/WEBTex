@@ -7,7 +7,7 @@ This is the README file for the WEBTEX course project at FMI.
 The WEBTEX course project is designed to provide students with hands-on experience in web development. Throughout the project, students will learn and apply various web technologies, such as HTML, CSS, and JavaScript, to build a fully functional web application.
 
 ## Project Goals
-
+bomba
 The main goals of the WEBTEX course project are:
 
 - Gain practical knowledge in web development.
