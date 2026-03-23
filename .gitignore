@@ -1,4 +1,4 @@
-data
+data/db/*
 dist
 package-lock.json
 node_modules
